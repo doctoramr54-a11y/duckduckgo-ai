@@ -1,9 +1,8 @@
-import {Hono} from 'hono'
-import {z} from "zod";
-import {validator} from "hono/validator";
-import {OpenAIRequest, OpenAIResponse, OpenAIStreamResponse} from "./types";
-import {streamSSE} from 'hono/streaming'
-import {cors} from 'hono/cors'
+import { Hono } from 'npm:hono'
+import { z } from 'npm:zod'
+import { validator } from 'npm:hono/validator'
+import { streamSSE } from 'npm:hono/streaming'
+import { cors } from 'npm:hono/cors'
 
 const headers = {
   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36",
@@ -82,7 +81,6 @@ app.post("/v1/chat/completions", validator('json', (value, c) => {
   }
   return parsed.data
 }), async (c) => {
-  // @ts-ignore
   const apikey = c.env["apikey"] ?? ''
   if (apikey) {
     const authorization = c.req.header("Authorization")
@@ -95,7 +93,7 @@ app.post("/v1/chat/completions", validator('json', (value, c) => {
   }
 
 
-  const params = await c.req.json<OpenAIRequest>()
+  const params = await c.req.json()
   const requestParams = {
     "model": params.model,
     "messages": []
@@ -108,7 +106,6 @@ app.post("/v1/chat/completions", validator('json', (value, c) => {
       messages.push(message)
     }
   }
-  // @ts-ignore
   requestParams["messages"] = messages
   try {
     let x4 = c.req.header("x-vqd-4")
@@ -181,7 +178,7 @@ app.post("/v1/chat/completions", validator('json', (value, c) => {
                 console.log('response parse error')
               }
               if (response) {
-                const openAIResponse: OpenAIStreamResponse = {
+                const openAIResponse = {
                   id: "chatcmpl-duckduck-ai",
                   object: "chat.completion",
                   created: (new Date()).getTime() / 1000,
@@ -227,7 +224,7 @@ app.post("/v1/chat/completions", validator('json', (value, c) => {
           console.log('parse error')
         }
       }
-      const response: OpenAIResponse = {
+      const response = {
         id: "chatcmpl-duckduck-ai",
         object: "chat.completion",
         created: (new Date()).getTime() / 1000,
